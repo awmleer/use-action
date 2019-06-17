@@ -8,7 +8,7 @@ export function useAction(action: () => void | Function, deps: any[]) {
   
   const execute = shouldExecute(data.deps, deps)
   if (execute) {
-    data.cleanUp()
+    if (data.cleanUp) data.cleanUp()
     data.deps = deps
     data.cleanUp = action()
   }
@@ -19,7 +19,7 @@ export function useAction(action: () => void | Function, deps: any[]) {
 }
 
 function shouldExecute(oldDeps: any[], deps: any[]): boolean {
-  if (deps === undefined) return true
+  if (oldDeps === undefined || deps === undefined) return true
   for (let i of deps) {
     if (deps[i] !== oldDeps[i]) return true
   }
