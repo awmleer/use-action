@@ -4,7 +4,7 @@
   "scripts": {
     "build": "gulp prebuild && tsc"
   },
-  "description": "React useChanging hook.",
+  "description": "React useAction hook.",
   "keywords": [
     "react",
     "hook",
