@@ -1,12 +1,12 @@
 import {useEffect, useRef} from 'react'
 
-type EffectCallback = () => (void | (() => void | undefined))
+type ActionCallback = () => (void | (() => void | undefined))
 type DependencyList = ReadonlyArray<unknown>
 
-export function useAction(action: EffectCallback, deps: DependencyList) {
+export function useAction(action: ActionCallback, deps: DependencyList) {
   const {current: data} = useRef<{
     deps: DependencyList | undefined,
-    cleanUp: ReturnType<EffectCallback> | undefined,
+    cleanUp: ReturnType<ActionCallback> | undefined,
   }>({
     deps: undefined,
     cleanUp: undefined,
