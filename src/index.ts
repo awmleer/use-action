@@ -1,26 +1,36 @@
 import {useEffect, useRef} from 'react'
 
-export function useAction(action: () => void | Function, deps: any[]) {
-  const {current: data} = useRef({
+type EffectCallback = () => (void | (() => void | undefined))
+type DependencyList = ReadonlyArray<unknown>
+
+export function useAction(action: EffectCallback, deps: DependencyList) {
+  const {current: data} = useRef<{
+    deps: DependencyList | undefined,
+    cleanUp: ReturnType<EffectCallback> | undefined,
+  }>({
     deps: undefined,
     cleanUp: undefined,
   })
-  
+
   const execute = shouldExecute(data.deps, deps)
   if (execute) {
     if (data.cleanUp) data.cleanUp()
     data.deps = deps
     data.cleanUp = action()
   }
-  
-  useEffect(() => {
+
+  useEffect(() => () => {
     if (data.cleanUp) data.cleanUp()
   }, [])
 }
 
-function shouldExecute(oldDeps: any[], deps: any[]): boolean {
+function shouldExecute(oldDeps: DependencyList | undefined, deps: DependencyList): boolean {
   if (oldDeps === undefined || deps === undefined) return true
-  for (let i of deps) {
+
+  if (oldDeps.length !== deps.length) return true
+
+  const length = oldDeps.length
+  for (let i = 0; i < length; i++) {
     if (deps[i] !== oldDeps[i]) return true
   }
   return false
